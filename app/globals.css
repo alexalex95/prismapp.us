@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Canvas ── */
+  --bg-base: #0f0518; /* Deep purple-black */
+  --bg-surface: #1a0b2e; /* Rich purple */
+  --bg-elevated: #24103a; /* Lighter purple */
+  --bg-glass: rgba(26, 11, 46, 0.7);
+
+  /* ── Brand Gradients ── */
+  /* Pink/Peach ("Sugar") */
+  --gradient-primary: linear-gradient(135deg, #FF6EC4 0%, #FF9E80 100%);
+  --accent-primary: #FF6EC4;
+
+  /* Purple/Blue ("Electric") */
+  --gradient-secondary: linear-gradient(135deg, #7873F5 0%, #2DE1FC 100%);
+  --accent-secondary: #7873F5;
+
+  /* ── Functional ── */
+  --text-primary: #FFFFFF;
+  --text-secondary: #B4A9C8;
+  --text-tertiary: #7D7295;
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-glass-strong: rgba(255, 255, 255, 0.2);
+
+  /* ── Status ── */
+  --status-online: #2EE59D;
+  --status-busy: #FB7185;
+  --status-away: #FFB86C;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  
+  --color-primary-start: #FF6EC4;
+  --color-primary-end: #FF9E80;
+  
+  --image-gradient-primary: var(--gradient-primary);
+  --image-gradient-secondary: var(--gradient-secondary);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  
+  --color-border-glass: var(--border-glass);
+  --color-border-glass-strong: var(--border-glass-strong);
+
+  --color-online: var(--status-online);
+
+  --font-display: var(--font-nunito);
+  --font-body: var(--font-inter);
+  
+  --animate-scale-in: scale-in 0.2s ease-out;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes scale-in {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.8; filter: brightness(1.2); }
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow-x: hidden;
+  /* Add a subtle mesh-like background effect */
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(120, 115, 245, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(255, 110, 196, 0.1) 0%, transparent 40%);
+  background-attachment: fixed;
+}
+
+/* Glass Utilities */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.text-gradient-primary {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
