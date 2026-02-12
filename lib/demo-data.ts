@@ -358,6 +358,16 @@ export type DemoMiniProfile = {
 
 export const demoMyProfiles: DemoMiniProfile[] = [
   {
+    id: "user-alex95",
+    display_name: "alex95",
+    role: "vers",
+    intent: "friends",
+    age: 25,
+    looking_now: true,
+    bio: "Test user account.",
+    photo_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=520&fit=crop&crop=face",
+  },
+  {
     id: "my-1",
     display_name: "Alex",
     role: "vers",

@@ -9,11 +9,44 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [password, setPassword] = useState("");
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
+    // 1. Try Mock Login (if username/password provided)
+    if (password) {
+      try {
+        const res = await fetch("/api/auth/demo-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: email, password }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // Set active profile in localStorage for the client-side context
+          if (typeof window !== "undefined") {
+            localStorage.setItem("activeProfileId", "user-alex95");
+          }
+          window.location.href = "/home"; // Hard redirect to refresh middleware
+          return;
+        } else {
+          setError(data.error || "Invalid credentials");
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        setError("Something went wrong. Please try again.");
+        setLoading(false);
+        return;
+      }
+    }
+
+    // 2. Fallback to Supabase Magic Link
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -67,15 +100,26 @@ export default function LoginPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-1.5">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="block w-full rounded-2xl bg-black/20 px-5 py-4 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-primary-start/50 transition-all border border-white/5 hover:bg-black/30"
-              />
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <input
+                  type="text"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email or username"
+                  className="block w-full rounded-2xl bg-black/20 px-5 py-4 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-primary-start/50 transition-all border border-white/5 hover:bg-black/30"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password (optional)"
+                  className="block w-full rounded-2xl bg-black/20 px-5 py-4 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-primary-start/50 transition-all border border-white/5 hover:bg-black/30"
+                />
+              </div>
             </div>
             {error && <p className="text-sm font-bold text-status-busy text-center bg-status-busy/10 py-2 rounded-lg">{error}</p>}
             <button
@@ -92,7 +136,7 @@ export default function LoginPage() {
                   Sending...
                 </span>
               ) : (
-                "Send me a magic link"
+                password ? "Login" : "Send me a magic link"
               )}
             </button>
           </form>

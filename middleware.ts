@@ -36,8 +36,14 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Bypass for demo session
+  const demoSession = request.cookies.get("demo_session");
+  if (demoSession?.value === "true") {
+    return supabaseResponse;
+  }
+
   // Redirect unauthenticated users to login (except for public routes)
-  const publicRoutes = ["/login", "/auth/callback", "/auth/confirm"];
+  const publicRoutes = ["/login", "/auth/callback", "/auth/confirm", "/api/auth/demo-login"];
   const isPublicRoute = publicRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
   );
