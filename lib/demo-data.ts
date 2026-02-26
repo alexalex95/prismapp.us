@@ -21,14 +21,11 @@ export type DemoProfile = {
 // Custom "DL" Discreet placeholder path
 const DL_PLACEHOLDER = "/dl_placeholder.png";
 
-// Reliable masculine Unsplash IDs:
-// 1506794778202-cad84cf45f1d (Man face)
-// 1500648767791-00dcc994a43e (Man face)
-// 1539571696357-5a69c17a67c6 (Man)
-// 1492562080023-ab3db95bfbce (Man)
-// 1519085360753-af0119f7cbe7 (Man suit)
-// 1507003211169-0a1dd7228f2d (Man)
-// 1504257432389-52343af06ae3 (Man)
+// New Shirtless Photos from public folder
+const SHIRTLESS_1 = "/shirtless_1.png";
+const SHIRTLESS_2 = "/shirtless_2.png";
+const SHIRTLESS_3 = "/shirtless_3.png";
+const SHIRTLESS_4 = "/shirtless_4.png";
 
 export const demoProfiles: DemoProfile[] = [
   {
@@ -40,11 +37,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 185,
     weight: 88,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=1067&fit=crop",
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_1,
+    photos: [SHIRTLESS_1, "/shirtless_2.png"],
     bio: "6'1. Training. Into fitness and outdoors.",
     distance: "0.3 mi",
   },
@@ -71,11 +65,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 183,
     weight: 82,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=800&h=1067&fit=crop",
-      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_2,
+    photos: [SHIRTLESS_2, SHIRTLESS_4],
     bio: "Full body. Hosting in Midtown.",
     distance: "0.7 mi",
   },
@@ -104,11 +95,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 188,
     weight: 85,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&h=1067&fit=crop",
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_4,
+    photos: [SHIRTLESS_4, SHIRTLESS_1],
     bio: "Shirtless. Gym rat. 6'2.",
     distance: "0.9 mi",
   },
@@ -121,10 +109,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 176,
     weight: 72,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_3,
+    photos: [SHIRTLESS_3],
     bio: "Midtown. Can travel.",
     distance: "1.5 mi",
   },
@@ -167,10 +153,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 179,
     weight: 77,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_1,
+    photos: [SHIRTLESS_1],
     bio: "Active lifestyle. DM me.",
     distance: "0.6 mi",
   },
@@ -183,10 +167,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 185,
     weight: 80,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_2,
+    photos: [SHIRTLESS_2],
     bio: "Can host. Clean and discreet.",
     distance: "0.2 mi",
   },
@@ -199,10 +181,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 168,
     weight: 60,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_4,
+    photos: [SHIRTLESS_4],
     bio: "Slim. Ready now.",
     distance: "0.8 mi",
   },
@@ -247,10 +227,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 174,
     weight: 68,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_2,
+    photos: [SHIRTLESS_2],
     bio: "Free after 10.",
     distance: "1.1 mi",
   },
@@ -277,10 +255,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 172,
     weight: 66,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_4,
+    photos: [SHIRTLESS_4],
     bio: "Young, fit. Hosting now.",
     distance: "0.1 mi",
   },
@@ -309,10 +285,8 @@ export const demoProfiles: DemoProfile[] = [
     height: 173,
     weight: 69,
     looking_now: true,
-    photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&h=1067&fit=crop",
-    photos: [
-      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&h=1067&fit=crop"
-    ],
+    photo_url: SHIRTLESS_3,
+    photos: [SHIRTLESS_3],
     bio: "Hosting tonight. East side.",
     distance: "0.3 mi",
   },
@@ -399,7 +373,7 @@ export const currentUser = {
   age: 27,
   looking_now: true,
   bio: "Just vibing. Let's see what happens.",
-  photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=520&fit=crop",
+  photo_url: SHIRTLESS_2,
 };
 
 // ── Helpers ──
