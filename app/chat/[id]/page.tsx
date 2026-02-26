@@ -1,4 +1,5 @@
 import ChatThread from "@/components/chat-thread";
+import { Suspense } from "react";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -6,5 +7,9 @@ type Props = {
 
 export default async function ChatThreadPage({ params }: Props) {
   const { id } = await params;
-  return <ChatThread conversationId={id} />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-base" />}>
+      <ChatThread conversationId={id} />
+    </Suspense>
+  );
 }

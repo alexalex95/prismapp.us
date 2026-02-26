@@ -7,17 +7,17 @@ import { currentUser } from "@/lib/demo-data";
 import Nav from "@/components/nav";
 
 const POSITIONS = [
-  { value: "top",    label: "Top",    icon: "⬆️", activeClass: "bg-blue-500/20 text-blue-200 border-blue-500/30 shadow-[0_0_14px_rgba(59,130,246,0.15)]" },
+  { value: "top", label: "Top", icon: "⬆️", activeClass: "bg-blue-500/20 text-blue-200 border-blue-500/30 shadow-[0_0_14px_rgba(59,130,246,0.15)]" },
   { value: "bottom", label: "Bottom", icon: "⬇️", activeClass: "bg-pink-500/20 text-pink-200 border-pink-500/30 shadow-[0_0_14px_rgba(236,72,153,0.15)]" },
-  { value: "vers",   label: "Vers",   icon: "↕️", activeClass: "bg-violet-500/20 text-violet-200 border-violet-500/30 shadow-[0_0_14px_rgba(139,92,246,0.15)]" },
-  { value: "side",   label: "Side",   icon: "🧩", activeClass: "bg-slate-400/20 text-slate-200 border-slate-400/30 shadow-[0_0_10px_rgba(148,163,184,0.12)]" },
+  { value: "vers", label: "Vers", icon: "↕️", activeClass: "bg-violet-500/20 text-violet-200 border-violet-500/30 shadow-[0_0_14px_rgba(139,92,246,0.15)]" },
+  { value: "side", label: "Side", icon: "🧩", activeClass: "bg-slate-400/20 text-slate-200 border-slate-400/30 shadow-[0_0_10px_rgba(148,163,184,0.12)]" },
 ];
 
 const INTENTS = [
   { value: "right now", label: "Right Now", icon: "🔥", activeClass: "bg-orange-500/18 text-orange-200 border-orange-500/28 shadow-[0_0_14px_rgba(249,115,22,0.15)]" },
-  { value: "tonight",   label: "Tonight",   icon: "🌙", activeClass: "bg-indigo-500/18 text-indigo-200 border-indigo-500/28 shadow-[0_0_14px_rgba(99,102,241,0.15)]" },
-  { value: "dates",     label: "Dates",     icon: "🥂", activeClass: "bg-rose-500/18 text-rose-200 border-rose-500/28 shadow-[0_0_14px_rgba(244,63,94,0.12)]" },
-  { value: "friends",   label: "Friends",   icon: "🤝", activeClass: "bg-emerald-500/18 text-emerald-200 border-emerald-500/28 shadow-[0_0_14px_rgba(52,211,153,0.12)]" },
+  { value: "tonight", label: "Tonight", icon: "🌙", activeClass: "bg-indigo-500/18 text-indigo-200 border-indigo-500/28 shadow-[0_0_14px_rgba(99,102,241,0.15)]" },
+  { value: "dates", label: "Dates", icon: "🥂", activeClass: "bg-rose-500/18 text-rose-200 border-rose-500/28 shadow-[0_0_14px_rgba(244,63,94,0.12)]" },
+  { value: "friends", label: "Friends", icon: "🤝", activeClass: "bg-emerald-500/18 text-emerald-200 border-emerald-500/28 shadow-[0_0_14px_rgba(52,211,153,0.12)]" },
 ];
 
 const chipBase =
@@ -35,7 +35,9 @@ export default function ProfilePage() {
     setLoggingOut(true);
     document.cookie = "demo_session=; path=/; max-age=0";
     const supabase = createClient();
-    await supabase.auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     window.location.href = "/login";
   }
 

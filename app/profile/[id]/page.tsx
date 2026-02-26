@@ -68,6 +68,12 @@ export default function ProfileDetailPage() {
     // Try to find/create in Supabase
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setMessaging(false);
+        const localId = `local-${currentUser.id}-${profileId}`;
+        router.push(`/chat/${localId}?otherProfileId=${profileId}`);
+        return;
+      }
       const myProfileId = currentUser.id;
 
       // Check existing conversation (either direction)
@@ -239,13 +245,12 @@ export default function ProfileDetailPage() {
             <button
               onClick={() => setReaction(reaction === "like" ? null : "like")}
               disabled={reaction === "nudge"}
-              className={`flex flex-col items-center justify-center h-[72px] w-16 rounded-2xl transition-all duration-200 active:scale-[0.95] shadow-lg border gap-1 ${
-                reaction === "like"
+              className={`flex flex-col items-center justify-center h-[72px] w-16 rounded-2xl transition-all duration-200 active:scale-[0.95] shadow-lg border gap-1 ${reaction === "like"
                   ? "bg-status-busy/15 border-status-busy/40 ring-1 ring-status-busy/30"
                   : reaction === "nudge"
                     ? "opacity-30 border-white/5 pointer-events-none"
                     : "opacity-50 border-white/10 hover:opacity-80 hover:bg-white/10"
-              }`}
+                }`}
             >
               <svg className={`w-7 h-7 transition-transform duration-200 ${reaction === "like" ? "text-status-busy scale-110" : "text-status-busy"}`} viewBox="0 0 24 24" fill="currentColor">
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
@@ -271,13 +276,12 @@ export default function ProfileDetailPage() {
             <button
               onClick={() => setReaction(reaction === "nudge" ? null : "nudge")}
               disabled={reaction === "like"}
-              className={`flex flex-col items-center justify-center h-[72px] w-16 rounded-2xl transition-all duration-200 active:scale-[0.95] shadow-lg border gap-1 ${
-                reaction === "nudge"
+              className={`flex flex-col items-center justify-center h-[72px] w-16 rounded-2xl transition-all duration-200 active:scale-[0.95] shadow-lg border gap-1 ${reaction === "nudge"
                   ? "bg-status-away/15 border-status-away/40 ring-1 ring-status-away/30"
                   : reaction === "like"
                     ? "opacity-30 border-white/5 pointer-events-none"
                     : "opacity-50 border-white/10 hover:opacity-80 hover:bg-white/10"
-              }`}
+                }`}
             >
               <span className={`text-[28px] transition-transform duration-200 ${reaction === "nudge" ? "scale-110" : ""}`}>🍆</span>
               <span className={`text-[10px] font-bold ${reaction === "nudge" ? "text-status-away" : "text-text-tertiary"}`}>Nudge</span>

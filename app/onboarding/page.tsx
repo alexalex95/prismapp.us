@@ -33,6 +33,12 @@ export default function OnboardingPage() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
+    if (!supabase) {
+      setError("Supabase is not configured. Redirecting to demo mode...");
+      setTimeout(() => router.push("/home"), 1500);
+      return;
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError("Not authenticated"); setLoading(false); return; }
 
@@ -79,8 +85,8 @@ export default function OnboardingPage() {
                   key={r.value}
                   onClick={() => { update("role", r.value); setTimeout(() => setStep(2), 150); }}
                   className={`rounded-2xl py-6 text-center text-lg font-bold transition-all duration-200 active:scale-95 border ${form.role === r.value
-                      ? "bg-accent text-white border-transparent shadow-lg shadow-accent/30 scale-105"
-                      : "glass text-text-primary hover:bg-white/10 border-white/5"
+                    ? "bg-accent text-white border-transparent shadow-lg shadow-accent/30 scale-105"
+                    : "glass text-text-primary hover:bg-white/10 border-white/5"
                     }`}
                 >
                   {r.label}
@@ -104,8 +110,8 @@ export default function OnboardingPage() {
                   key={i.value}
                   onClick={() => { update("intent", i.value); setTimeout(() => setStep(3), 150); }}
                   className={`w-full rounded-2xl px-6 py-5 text-left transition-all duration-200 active:scale-[0.98] border group ${form.intent === i.value
-                      ? "bg-gradient-to-r from-status-online/20 to-teal-500/20 border-status-online/50 shadow-[0_0_20px_rgba(46,229,157,0.2)]"
-                      : "glass hover:bg-white/5 border-white/5"
+                    ? "bg-gradient-to-r from-status-online/20 to-teal-500/20 border-status-online/50 shadow-[0_0_20px_rgba(46,229,157,0.2)]"
+                    : "glass hover:bg-white/5 border-white/5"
                     }`}
                 >
                   <span className={`text-lg font-bold block group-hover:text-white transition-colors ${form.intent === i.value ? "text-status-online" : "text-text-primary"}`}>

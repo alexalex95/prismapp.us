@@ -19,8 +19,8 @@ function MessageGroup({ messages, isMe }: { messages: DemoMessage[]; isMe: boole
         <div
           key={msg.id}
           className={`px-4 py-3 text-[15px] leading-relaxed tracking-wide ${isMe
-              ? "bg-gradient-to-br from-[#FF5C8D] to-[#8E5CF4] text-white rounded-[16px]"
-              : "bg-[#25232C] text-white rounded-[16px]"
+            ? "bg-gradient-to-br from-[#FF5C8D] to-[#8E5CF4] text-white rounded-[16px]"
+            : "bg-[#25232C] text-white rounded-[16px]"
             }`}
         >
           {msg.content}
@@ -49,13 +49,14 @@ export default function ChatThread({ conversationId }: { conversationId: string 
   const [input, setInput] = useState("");
   const [supabaseReady, setSupabaseReady] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const supabaseRef = useRef(createClient());
 
   const loadSupabaseMessages = useCallback(async () => {
     if (conversationId.startsWith("conv-") || conversationId.startsWith("local-")) return;
 
     try {
-      const supabase = supabaseRef.current;
+      const supabase = createClient();
+      if (!supabase) return;
+
       const { data, error } = await supabase
         .from("messages")
         .select("id, content, sender_profile_id, created_at")
@@ -85,7 +86,9 @@ export default function ChatThread({ conversationId }: { conversationId: string 
   useEffect(() => {
     if (!supabaseReady && !conversationId.match(/^[0-9a-f-]{36}$/)) return;
 
-    const supabase = supabaseRef.current;
+    const supabase = createClient();
+    if (!supabase) return;
+
     const channel = supabase
       .channel(`messages:${conversationId}`)
       .on(
@@ -158,7 +161,9 @@ export default function ChatThread({ conversationId }: { conversationId: string 
 
     if (supabaseReady || conversationId.match(/^[0-9a-f-]{36}$/)) {
       try {
-        const supabase = supabaseRef.current;
+        const supabase = createClient();
+        if (!supabase) return;
+
         const myProfileId = localStorage.getItem("activeProfileId") || "";
 
         const { data } = await supabase

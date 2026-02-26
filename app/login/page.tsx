@@ -45,17 +45,24 @@ export default function LoginPage() {
     }
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    if (supabase) {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        setError(error.message);
+      } else {
+        setSent(true);
+      }
     } else {
-      setSent(true);
+      setError("Supabase is not configured. Redirecting to demo mode...");
+      setTimeout(() => {
+        window.location.href = "/home";
+      }, 1500);
     }
     setLoading(false);
   }
