@@ -9,7 +9,9 @@ export async function POST(request: Request) {
 
     // 1. Clear Supabase session
     const supabase = await createClient();
-    await supabase.auth.signOut();
+    if (supabase) {
+        await supabase.auth.signOut();
+    }
 
     // 2. Clear demo session cookie
     cookieStore.delete("demo_session");

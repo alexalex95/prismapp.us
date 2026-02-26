@@ -8,26 +8,28 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      // Check if user has a profile — if not, redirect to onboarding
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (supabase) {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (!error) {
+        // Check if user has a profile — if not, redirect to onboarding
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("id", user.id)
-          .single();
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("id", user.id)
+            .single();
 
-        if (!profile) {
-          return NextResponse.redirect(`${origin}/onboarding`);
+          if (!profile) {
+            return NextResponse.redirect(`${origin}/onboarding`);
+          }
         }
-      }
 
-      return NextResponse.redirect(`${origin}${next}`);
+        return NextResponse.redirect(`${origin}${next}`);
+      }
     }
   }
 

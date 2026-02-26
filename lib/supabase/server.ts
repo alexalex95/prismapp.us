@@ -8,9 +8,8 @@ export async function createClient() {
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
-    throw new Error(
-      "Missing Supabase environment variables. Copy .env.local.example to .env.local and fill in your project credentials."
-    );
+    console.warn("Missing Supabase environment variables. Falling back to demo mode.");
+    return null;
   }
 
   return createServerClient(

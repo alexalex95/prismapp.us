@@ -10,38 +10,42 @@ export default async function HomePage() {
   const cookieStore = await cookies();
   const isDemoSession = cookieStore.get("demo_session")?.value === "true";
 
-  if (!isDemoSession) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) redirect("/login");
-  }
-
   // For demo sessions or when Supabase tables don't exist, use demo data
   let profiles = demoProfiles;
 
   if (!isDemoSession) {
+    const supabase = await createClient();
+    if (supabase) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) redirect("/login");
+    }
+  }
+
+  if (!isDemoSession) {
     try {
       const supabase = await createClient();
-      const { data: realProfiles } = await supabase
-        .from("mini_profiles")
-        .select("id, display_name, role, intent, age, looking_now, active")
-        .eq("active", true)
-        .order("looking_now", { ascending: false })
-        .order("created_at", { ascending: false });
+      if (supabase) {
+        const { data: realProfiles } = await supabase
+          .from("mini_profiles")
+          .select("id, display_name, role, intent, age, looking_now, active")
+          .eq("active", true)
+          .order("looking_now", { ascending: false })
+          .order("created_at", { ascending: false });
 
-      if (realProfiles && realProfiles.length > 0) {
-        profiles = realProfiles.map((p) => ({
-          ...p,
-          photo_url: "",
-          photos: [],
-          bio: "",
-          distance: "",
-          height: 0,
-          weight: 0,
-        }));
+        if (realProfiles && realProfiles.length > 0) {
+          profiles = realProfiles.map((p) => ({
+            ...p,
+            photo_url: "",
+            photos: [],
+            bio: "",
+            distance: "",
+            height: 0,
+            weight: 0,
+          }));
+        }
       }
     } catch {
       // Supabase tables may not exist yet
