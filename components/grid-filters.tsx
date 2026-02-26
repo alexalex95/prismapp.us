@@ -39,7 +39,7 @@ function FilterBar({
             className={`relative px-3 py-1.5 text-[11px] font-semibold rounded-md transition-all duration-150 min-w-[44px] ${
               selected
                 ? "text-accent"
-                : "text-tertiary hover:text-secondary"
+                : "text-text-tertiary hover:text-text-secondary"
             }`}
           >
             {selected && (
@@ -83,12 +83,12 @@ export default function GridFilters() {
         onClick={() => setFilter("looking_now", lookingNow ? "false" : "true")}
         className={`flex-shrink-0 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all duration-150 min-h-[32px] ${
           lookingNow
-            ? "bg-mint/15 text-mint border border-mint/25"
-            : "bg-elevated/80 text-tertiary hover:text-secondary"
+            ? "bg-status-online/15 text-status-online border border-status-online/25"
+            : "bg-elevated/80 text-text-tertiary hover:text-text-secondary"
         }`}
       >
         <span
-          className={`h-[5px] w-[5px] rounded-full ${lookingNow ? "bg-mint" : "bg-tertiary"}`}
+          className={`h-[5px] w-[5px] rounded-full ${lookingNow ? "bg-status-online" : "bg-text-tertiary"}`}
           style={lookingNow ? { animation: "glow 2s ease-in-out infinite" } : undefined}
         />
         Now

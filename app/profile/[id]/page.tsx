@@ -2,27 +2,37 @@
 
 import { useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { demoProfiles, demoConversations } from "@/lib/demo-data";
-import { useActiveProfile } from "@/lib/active-profile";
+import { demoProfiles, demoConversations, currentUser } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/client";
 
 const intentLabels: Record<string, string> = {
-  "right now": "Right Now",
-  tonight: "Tonight",
+  "right now": "🔥 Right Now",
+  tonight: "💦 Tonight",
   dating: "Dates",
   friends: "Friends",
 };
+
+const ROLE_EMOJI: Record<string, string> = { top: "▲", bottom: "▼", vers: "◇", side: "◐" };
+const ROLE_COLORS: Record<string, string> = {
+  top: "bg-blue-500/20 text-blue-200 border-blue-500/25",
+  bottom: "bg-pink-500/20 text-pink-200 border-pink-500/25",
+  vers: "bg-purple-500/20 text-purple-200 border-purple-500/25",
+  side: "bg-slate-400/20 text-slate-200 border-slate-400/25",
+};
+
+function isUrgentIntent(intent: string): boolean {
+  return ["right now", "tonight"].includes(intent.toLowerCase());
+}
 
 export default function ProfileDetailPage() {
   const router = useRouter();
   const params = useParams();
   const profileId = params.id as string;
   const profile = demoProfiles.find((p) => p.id === profileId);
-  const { activeProfile } = useActiveProfile();
-
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const [messaging, setMessaging] = useState(false);
+  const [reaction, setReaction] = useState<"like" | "nudge" | null>(null);
   const touchStartY = useRef(0);
 
   if (!profile) {
@@ -58,7 +68,7 @@ export default function ProfileDetailPage() {
     // Try to find/create in Supabase
     try {
       const supabase = createClient();
-      const myProfileId = activeProfile.id;
+      const myProfileId = currentUser.id;
 
       // Check existing conversation (either direction)
       const { data: existing } = await supabase
@@ -91,7 +101,7 @@ export default function ProfileDetailPage() {
       }
     } catch {
       // Fallback: route with query param so chat thread can look up the profile
-      const localId = `local-${activeProfile.id}-${profileId}`;
+      const localId = `local-${currentUser.id}-${profileId}`;
       router.push(`/chat/${localId}?otherProfileId=${profileId}`);
     }
   }
@@ -99,7 +109,7 @@ export default function ProfileDetailPage() {
   return (
     <div className="fixed inset-0 bg-base z-50 flex flex-col overflow-hidden animate-in fade-in duration-300">
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-5 pt-safe-top pb-3 pointer-events-none">
+      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-5 pt-12 pb-3 pointer-events-none">
         <button
           onClick={() => router.back()}
           className="pointer-events-auto flex items-center justify-center h-10 w-10 rounded-full glass hover:bg-white/10 transition-all active:scale-95 shadow-lg shadow-black/20"
@@ -165,7 +175,7 @@ export default function ProfileDetailPage() {
           <span className="h-1.5 w-12 rounded-full bg-white/20" />
         </div>
 
-        <div className="px-6 pb-safe-bottom space-y-6">
+        <div className="px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] space-y-6">
           {/* Name + age + status */}
           <div>
             <div className="flex items-end gap-3 mb-1">
@@ -175,15 +185,21 @@ export default function ProfileDetailPage() {
 
             <div className="flex items-center gap-4 mt-3">
               {profile.looking_now && (
-                <div className="flex items-center gap-2 bg-status-online/10 px-3 py-1.5 rounded-full border border-status-online/20">
-                  <span
-                    className="h-2 w-2 rounded-full bg-status-online shadow-[0_0_8px_rgba(46,229,157,0.8)]"
-                    style={{ animation: "glow 2s ease-in-out infinite" }}
-                  />
-                  <span className="text-sm font-bold text-status-online">
+                isUrgentIntent(profile.intent) ? (
+                  <span className="tag-urgent flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold">
                     {intentLabels[profile.intent] || "Available"}
                   </span>
-                </div>
+                ) : (
+                  <div className="flex items-center gap-2 bg-status-online/10 px-3 py-1.5 rounded-full border border-status-online/20">
+                    <span
+                      className="h-2 w-2 rounded-full bg-status-online shadow-[0_0_8px_rgba(46,229,157,0.8)]"
+                      style={{ animation: "glow 2s ease-in-out infinite" }}
+                    />
+                    <span className="text-sm font-bold text-status-online">
+                      {intentLabels[profile.intent] || "Available"}
+                    </span>
+                  </div>
+                )
               )}
               <span className="text-sm font-medium text-text-tertiary flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -197,12 +213,18 @@ export default function ProfileDetailPage() {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-white/90 glass-pill px-3 py-1.5 rounded-lg shadow-sm border border-white/5">
-              {profile.role}
+            <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg border ${ROLE_COLORS[profile.role] || "bg-white/10 text-white/70 border-white/10"}`}>
+              {ROLE_EMOJI[profile.role] || ""} {profile.role}
             </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-white/90 glass-pill px-3 py-1.5 rounded-lg shadow-sm border border-white/5">
-              {intentLabels[profile.intent] || profile.intent}
-            </span>
+            {isUrgentIntent(profile.intent) ? (
+              <span className="tag-urgent text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg">
+                {intentLabels[profile.intent] || profile.intent}
+              </span>
+            ) : (
+              <span className="text-xs font-bold uppercase tracking-wider text-white/90 glass-pill px-3 py-1.5 rounded-lg shadow-sm border border-white/5">
+                {intentLabels[profile.intent] || profile.intent}
+              </span>
+            )}
           </div>
 
           {/* Bio */}
@@ -214,16 +236,27 @@ export default function ProfileDetailPage() {
 
           {/* Action buttons */}
           <div className="flex items-center gap-4 pt-2">
-            <button className="flex items-center justify-center h-14 w-14 rounded-2xl glass hover:bg-white/10 transition-all active:scale-[0.95] shadow-lg border border-white/10 group">
-              <svg className="w-7 h-7 text-status-busy group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+            <button
+              onClick={() => setReaction(reaction === "like" ? null : "like")}
+              disabled={reaction === "nudge"}
+              className={`flex flex-col items-center justify-center h-[72px] w-16 rounded-2xl transition-all duration-200 active:scale-[0.95] shadow-lg border gap-1 ${
+                reaction === "like"
+                  ? "bg-status-busy/15 border-status-busy/40 ring-1 ring-status-busy/30"
+                  : reaction === "nudge"
+                    ? "opacity-30 border-white/5 pointer-events-none"
+                    : "opacity-50 border-white/10 hover:opacity-80 hover:bg-white/10"
+              }`}
+            >
+              <svg className={`w-7 h-7 transition-transform duration-200 ${reaction === "like" ? "text-status-busy scale-110" : "text-status-busy"}`} viewBox="0 0 24 24" fill="currentColor">
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
+              <span className={`text-[10px] font-bold ${reaction === "like" ? "text-status-busy" : "text-text-tertiary"}`}>Like</span>
             </button>
 
             <button
               onClick={handleMessage}
               disabled={messaging}
-              className="flex-1 rounded-2xl bg-gradient-to-r from-primary-start to-primary-end h-14 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-primary-start/30 hover:shadow-primary-start/50 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="flex-1 rounded-2xl bg-accent h-[72px] flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-accent/30 hover:shadow-accent/50 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {messaging ? (
                 <svg className="animate-spin h-6 w-6 text-white" viewBox="0 0 24 24" fill="none">
@@ -235,11 +268,19 @@ export default function ProfileDetailPage() {
               )}
             </button>
 
-            <button className="flex items-center justify-center h-14 w-14 rounded-2xl glass hover:bg-white/10 transition-all active:scale-[0.95] shadow-lg border border-white/10 group">
-              <svg className="w-7 h-7 text-status-away group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
-                <path fillRule="evenodd" d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 0 1-4.5 0Z" clipRule="evenodd" />
-              </svg>
+            <button
+              onClick={() => setReaction(reaction === "nudge" ? null : "nudge")}
+              disabled={reaction === "like"}
+              className={`flex flex-col items-center justify-center h-[72px] w-16 rounded-2xl transition-all duration-200 active:scale-[0.95] shadow-lg border gap-1 ${
+                reaction === "nudge"
+                  ? "bg-status-away/15 border-status-away/40 ring-1 ring-status-away/30"
+                  : reaction === "like"
+                    ? "opacity-30 border-white/5 pointer-events-none"
+                    : "opacity-50 border-white/10 hover:opacity-80 hover:bg-white/10"
+              }`}
+            >
+              <span className={`text-[28px] transition-transform duration-200 ${reaction === "nudge" ? "scale-110" : ""}`}>🍆</span>
+              <span className={`text-[10px] font-bold ${reaction === "nudge" ? "text-status-away" : "text-text-tertiary"}`}>Nudge</span>
             </button>
           </div>
         </div>

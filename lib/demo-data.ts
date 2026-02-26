@@ -9,6 +9,8 @@ export type DemoProfile = {
   role: string;
   intent: string;
   age: number;
+  height: number; // cm
+  weight: number; // kg
   looking_now: boolean;
   photo_url: string;
   photos: string[];
@@ -23,6 +25,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "top",
     intent: "right now",
     age: 28,
+    height: 180,
+    weight: 78,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -38,6 +42,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "bottom",
     intent: "tonight",
     age: 25,
+    height: 175,
+    weight: 70,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -52,6 +58,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "vers",
     intent: "right now",
     age: 31,
+    height: 183,
+    weight: 82,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -66,6 +74,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "side",
     intent: "dating",
     age: 41,
+    height: 178,
+    weight: 75,
     looking_now: false,
     photo_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -80,6 +90,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "top",
     intent: "tonight",
     age: 24,
+    height: 188,
+    weight: 85,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -94,6 +106,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "vers",
     intent: "right now",
     age: 33,
+    height: 176,
+    weight: 72,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -108,6 +122,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "bottom",
     intent: "dating",
     age: 22,
+    height: 170,
+    weight: 65,
     looking_now: false,
     photo_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -122,6 +138,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "top",
     intent: "right now",
     age: 36,
+    height: 182,
+    weight: 88,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -136,6 +154,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "vers",
     intent: "tonight",
     age: 29,
+    height: 179,
+    weight: 77,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -150,6 +170,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "top",
     intent: "right now",
     age: 26,
+    height: 185,
+    weight: 80,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1548372290-8d01b6c8e78c?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -164,6 +186,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "bottom",
     intent: "right now",
     age: 23,
+    height: 168,
+    weight: 60,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1545167622-3a6ac756afa4?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -178,6 +202,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "top",
     intent: "dating",
     age: 34,
+    height: 190,
+    weight: 95,
     looking_now: false,
     photo_url: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -192,6 +218,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "vers",
     intent: "friends",
     age: 27,
+    height: 177,
+    weight: 73,
     looking_now: false,
     photo_url: "https://images.unsplash.com/photo-1521119989659-a83eee488004?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -206,6 +234,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "bottom",
     intent: "tonight",
     age: 30,
+    height: 174,
+    weight: 68,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1583195764036-6dc248ac07d9?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -220,6 +250,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "side",
     intent: "right now",
     age: 38,
+    height: 178,
+    weight: 80,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -234,6 +266,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "vers",
     intent: "right now",
     age: 21,
+    height: 172,
+    weight: 66,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -248,6 +282,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "top",
     intent: "friends",
     age: 45,
+    height: 186,
+    weight: 92,
     looking_now: false,
     photo_url: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -262,6 +298,8 @@ export const demoProfiles: DemoProfile[] = [
     role: "bottom",
     intent: "right now",
     age: 26,
+    height: 173,
+    weight: 69,
     looking_now: true,
     photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=533&fit=crop&crop=face",
     photos: [
@@ -344,60 +382,17 @@ export const demoConversations: DemoConversation[] = [
   },
 ];
 
-// ── "My" profiles for profile switching ──
-export type DemoMiniProfile = {
-  id: string;
-  display_name: string;
-  role: string;
-  intent: string;
-  age: number;
-  looking_now: boolean;
-  bio: string;
-  photo_url: string;
+// ── Current user (single profile, no switching) ──
+export const currentUser = {
+  id: "user-me",
+  display_name: "Alex",
+  role: "vers",
+  intent: "friends",
+  age: 27,
+  looking_now: true,
+  bio: "Just vibing. Let's see what happens.",
+  photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=520&fit=crop&crop=face",
 };
-
-export const demoMyProfiles: DemoMiniProfile[] = [
-  {
-    id: "user-alex95",
-    display_name: "alex95",
-    role: "vers",
-    intent: "friends",
-    age: 25,
-    looking_now: true,
-    bio: "Test user account.",
-    photo_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=520&fit=crop&crop=face",
-  },
-  {
-    id: "my-1",
-    display_name: "Alex",
-    role: "vers",
-    intent: "dating",
-    age: 27,
-    looking_now: false,
-    bio: "Just vibing. Let's see what happens.",
-    photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=520&fit=crop&crop=face",
-  },
-  {
-    id: "my-2",
-    display_name: "A",
-    role: "top",
-    intent: "right now",
-    age: 27,
-    looking_now: true,
-    bio: "Hosting tonight. DM me.",
-    photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=520&fit=crop&crop=face",
-  },
-  {
-    id: "my-3",
-    display_name: "Alex_alt",
-    role: "bottom",
-    intent: "tonight",
-    age: 27,
-    looking_now: true,
-    bio: "Looking for later tonight.",
-    photo_url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=520&fit=crop&crop=face",
-  },
-];
 
 // ── Helpers ──
 export function timeAgo(isoString: string): string {

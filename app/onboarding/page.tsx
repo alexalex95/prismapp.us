@@ -54,11 +54,11 @@ export default function OnboardingPage() {
       <div className="absolute bottom-[-20%] left-[-20%] w-[500px] h-[500px] bg-accent-secondary/20 rounded-full blur-[100px] animate-float" style={{ animationDelay: "-2s" }} />
 
       {/* Progress */}
-      <div className="fixed top-safe-top left-0 right-0 flex justify-center gap-2 pt-4 z-20">
+      <div className="fixed top-0 left-0 right-0 flex justify-center gap-2 pt-12 z-20">
         {[1, 2, 3].map((s) => (
           <div
             key={s}
-            className={`h-1.5 rounded-full transition-all duration-500 ease-spring ${s === step ? "w-8 bg-gradient-to-r from-primary-start to-primary-end shadow-[0_0_10px_rgba(255,110,196,0.5)]" : s < step ? "w-2 bg-text-secondary" : "w-2 bg-white/10"
+            className={`h-1.5 rounded-full transition-all duration-500 ease-spring ${s === step ? "w-8 bg-accent shadow-[0_0_10px_rgba(74,144,226,0.5)]" : s < step ? "w-2 bg-text-secondary" : "w-2 bg-white/10"
               }`}
           />
         ))}
@@ -79,7 +79,7 @@ export default function OnboardingPage() {
                   key={r.value}
                   onClick={() => { update("role", r.value); setTimeout(() => setStep(2), 150); }}
                   className={`rounded-2xl py-6 text-center text-lg font-bold transition-all duration-200 active:scale-95 border ${form.role === r.value
-                      ? "bg-gradient-to-br from-primary-start to-primary-end text-white border-transparent shadow-lg shadow-primary-start/30 scale-105"
+                      ? "bg-accent text-white border-transparent shadow-lg shadow-accent/30 scale-105"
                       : "glass text-text-primary hover:bg-white/10 border-white/5"
                     }`}
                 >

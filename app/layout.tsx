@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Nunito } from "next/font/google";
-import { ActiveProfileProvider } from "@/lib/active-profile";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -17,8 +17,9 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Hookup",
-  description: "Get in. Get close.",
+  title: "Prism",
+  description: "Find your people. Show your colors.",
+  metadataBase: new URL("https://prismapp.us"),
 };
 
 export const viewport: Viewport = {
@@ -38,9 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${nunito.variable} antialiased font-body`}>
-        <ActiveProfileProvider>
+        <ThemeProvider>
           {children}
-        </ActiveProfileProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

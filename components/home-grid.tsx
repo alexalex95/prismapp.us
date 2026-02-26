@@ -2,107 +2,97 @@
 
 import { useState } from "react";
 import ProfileCard from "@/components/profile-card";
+import HomeFilterBar from "@/components/home-filter-bar";
+import { FilterState, INITIAL_FILTERS } from "@/components/filter-sheet";
 import type { DemoProfile } from "@/lib/demo-data";
 
-type Profile = DemoProfile | {
-  id: string;
-  display_name: string;
-  role: string;
-  intent: string;
-  age: number;
-  looking_now: boolean;
-  photo_url?: string;
+type Profile = DemoProfile;
+type StatusFilter = "online" | "ready_now" | "tonight" | "browsing" | null;
+
+// Per-role background gradient overlays
+const ROLE_GRADIENTS: Record<string, string> = {
+  all: [
+    "radial-gradient(ellipse 110% 70% at 8% 4%, rgba(89, 42, 159, 0.13) 0%, transparent 55%)",
+    "radial-gradient(ellipse 70% 50% at 88% 88%, rgba(60, 20, 100, 0.07) 0%, transparent 50%)",
+  ].join(", "),
+  top: "radial-gradient(ellipse 100% 65% at 12% 0%, rgba(59, 130, 246, 0.17) 0%, transparent 60%)",
+  bottom: "radial-gradient(ellipse 100% 65% at 88% 0%, rgba(236, 72, 153, 0.15) 0%, transparent 60%)",
+  vers: "radial-gradient(ellipse 100% 65% at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 60%)",
 };
 
-const ROLES = [
-  { value: "all", label: "All" },
-  { value: "top", label: "Top" },
-  { value: "bottom", label: "Bottom" },
-  { value: "vers", label: "Vers" },
-  { value: "side", label: "Side" },
-];
-
-const INTENTS = [
-  { value: "all", label: "All" },
-  { value: "right now", label: "Now" },
-  { value: "tonight", label: "Tonight" },
-  { value: "dating", label: "Dates" },
-  { value: "friends", label: "Friends" },
-];
-
 export default function HomeGrid({ allProfiles }: { allProfiles: Profile[] }) {
-  const [role, setRole] = useState("all");
-  const [intent, setIntent] = useState("all");
-  const [lookingNow, setLookingNow] = useState(false);
+  const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(null);
 
+  const handleFiltersChange = (vals: FilterState & { statusFilter: StatusFilter }) => {
+    setFilters({
+      role: vals.role,
+      intent: vals.intent,
+      ageRange: vals.ageRange,
+      heightRange: vals.heightRange,
+      weightRange: vals.weightRange,
+    });
+    setStatusFilter(vals.statusFilter);
+  };
+
+  // Apply filters
   const filtered = allProfiles.filter((p) => {
-    if (role !== "all" && p.role !== role) return false;
-    if (intent !== "all" && p.intent !== intent) return false;
-    if (lookingNow && !p.looking_now) return false;
+    // Role
+    if (filters.role !== "all" && p.role !== filters.role) return false;
+
+    // Intent
+    if (filters.intent !== "all" && p.intent !== filters.intent) return false;
+
+    // Age
+    if (p.age < filters.ageRange[0] || p.age > filters.ageRange[1]) return false;
+
+    // Height
+    if (p.height < filters.heightRange[0] || p.height > filters.heightRange[1]) return false;
+
+    // Weight
+    if (p.weight < filters.weightRange[0] || p.weight > filters.weightRange[1]) return false;
+
+    // Status filter (exclusive quick filter)
+    if (statusFilter === "online" && !p.looking_now) return false;
+    if (statusFilter === "ready_now" && p.intent !== "right now") return false;
+    if (statusFilter === "tonight" && p.intent !== "tonight") return false;
+    if (statusFilter === "browsing" && p.intent !== "dates" && p.intent !== "friends") return false;
+
     return true;
   });
 
+  const activeRole = filters.role in ROLE_GRADIENTS ? filters.role : "all";
+  // Key change triggers the grid-in animation on filter updates
+  const gridKey = `${filters.role}-${filters.intent}-${statusFilter}`;
+
   return (
     <>
-      <div className="sticky top-[56px] z-40 backdrop-blur-xl bg-base/50 pb-2 border-b border-white/5">
-        {/* Inline filter bar */}
-        <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar">
-          {/* Role pills */}
-          {ROLES.map((r) => (
-            <button
-              key={r.value}
-              onClick={() => setRole(role === r.value && r.value !== "all" ? "all" : r.value)}
-              className={`shrink-0 px-4 py-1.5 text-[13px] font-bold rounded-full transition-all duration-300 transform ${role === r.value
-                  ? "bg-gradient-to-r from-primary-start to-primary-end text-white shadow-lg shadow-primary-start/20 scale-105"
-                  : "glass-pill text-text-secondary hover:bg-white/10"
-                }`}
-            >
-              {r.label}
-            </button>
-          ))}
+      {/* Dynamic background gradient overlays (fixed, behind all content) */}
+      {(Object.keys(ROLE_GRADIENTS) as string[]).map((role) => (
+        <div
+          key={role}
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            background: ROLE_GRADIENTS[role],
+            opacity: activeRole === role ? 1 : 0,
+            transition: "opacity 0.65s ease",
+          }}
+        />
+      ))}
 
-          {/* Divider */}
-          <span className="shrink-0 h-4 w-px bg-white/10 mx-1" />
+      <HomeFilterBar onFiltersChange={handleFiltersChange} />
 
-          {/* Now toggle */}
-          <button
-            onClick={() => setLookingNow(!lookingNow)}
-            className={`shrink-0 flex items-center gap-1.5 px-4 py-1.5 text-[13px] font-bold rounded-full transition-all duration-300 ${lookingNow
-                ? "bg-gradient-to-r from-status-online to-teal-400 text-base shadow-lg shadow-status-online/20"
-                : "glass-pill text-text-secondary hover:bg-white/10"
-              }`}
-          >
-            <span className={`h-2 w-2 rounded-full ${lookingNow ? "bg-base" : "bg-status-online"}`} />
-            Online
-          </button>
-        </div>
-
-        {/* Intent row */}
-        <div className="flex items-center gap-2 px-4 pb-2 overflow-x-auto no-scrollbar">
-          {INTENTS.map((i) => (
-            <button
-              key={i.value}
-              onClick={() => setIntent(intent === i.value && i.value !== "all" ? "all" : i.value)}
-              className={`shrink-0 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-lg transition-all ${intent === i.value
-                  ? "text-accent-secondary bg-accent-secondary/10 border border-accent-secondary/30"
-                  : "text-text-tertiary border border-transparent hover:border-white/10"
-                }`}
-            >
-              {i.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Grid */}
-      <div className="px-3 py-3 min-h-[calc(100vh-200px)]">
+      <div className="px-3 py-3 min-h-[calc(100vh-200px)] relative z-[1]">
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div
+            key={gridKey}
+            className="grid grid-cols-3 gap-1.5 sm:gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 animate-grid-in"
+          >
             {filtered.map((p, i) => (
               <div
                 key={p.id}
                 className="animate-in fade-in fill-mode-both"
-                style={{ animationDelay: `${i * 50}ms` }}
+                style={{ animationDelay: `${i * 30}ms` }}
               >
                 <ProfileCard
                   id={p.id}
@@ -111,18 +101,18 @@ export default function HomeGrid({ allProfiles }: { allProfiles: Profile[] }) {
                   intent={p.intent}
                   age={p.age}
                   looking_now={p.looking_now}
-                  photo_url={"photo_url" in p ? p.photo_url : undefined}
+                  photo_url={p.photo_url}
                 />
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center pt-32 text-center animate-pulse-glow">
+          <div className="flex flex-col items-center justify-center pt-32 text-center">
             <div className="w-16 h-16 rounded-full bg-surface mb-4 flex items-center justify-center text-3xl">
               👻
             </div>
             <p className="text-text-secondary font-display font-bold text-lg">No matches found</p>
-            <p className="text-text-tertiary text-sm mt-1">Try expanding your search to other tribes</p>
+            <p className="text-text-tertiary text-sm mt-1">Try relaxing your filters</p>
           </div>
         )}
       </div>

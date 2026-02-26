@@ -14,21 +14,20 @@ import {
 
 function MessageGroup({ messages, isMe }: { messages: DemoMessage[]; isMe: boolean }) {
   return (
-    <div className={`flex flex-col gap-[2px] max-w-[75%] ${isMe ? "self-end items-end" : "self-start items-start"}`}>
-      {messages.map((msg) => (
+    <div className={`flex flex-col gap-1 max-w-[75%] ${isMe ? "self-end items-end" : "self-start items-start"}`}>
+      {messages.map((msg, i) => (
         <div
           key={msg.id}
-          className={`px-3.5 py-2.5 text-[15px] leading-[1.4] ${
-            isMe
-              ? "bg-gradient-to-br from-accent to-[#6955E0] text-white rounded-[20px] rounded-br-[6px]"
-              : "bg-surface text-primary rounded-[20px] rounded-bl-[6px]"
-          }`}
+          className={`px-4 py-3 text-[15px] leading-relaxed tracking-wide ${isMe
+              ? "bg-gradient-to-br from-[#FF5C8D] to-[#8E5CF4] text-white rounded-[16px]"
+              : "bg-[#25232C] text-white rounded-[16px]"
+            }`}
         >
           {msg.content}
         </div>
       ))}
       <span
-        className="text-[10px] text-tertiary mt-0.5 px-1"
+        className="text-[10px] text-text-tertiary px-1 opacity-60"
         style={{ animation: "fade-in 0.3s ease-out" }}
       >
         {timeAgo(messages[messages.length - 1].created_at)}
@@ -41,7 +40,6 @@ export default function ChatThread({ conversationId }: { conversationId: string 
   const searchParams = useSearchParams();
   const otherProfileId = searchParams.get("otherProfileId");
 
-  // Find demo conversation or profile
   const demoConv = demoConversations.find((c) => c.id === conversationId);
   const otherProfile: DemoProfile | undefined =
     demoConv?.profile ||
@@ -53,9 +51,7 @@ export default function ChatThread({ conversationId }: { conversationId: string 
   const bottomRef = useRef<HTMLDivElement>(null);
   const supabaseRef = useRef(createClient());
 
-  // Try loading messages from Supabase
   const loadSupabaseMessages = useCallback(async () => {
-    // Only attempt if this looks like a real UUID conversation
     if (conversationId.startsWith("conv-") || conversationId.startsWith("local-")) return;
 
     try {
@@ -78,16 +74,14 @@ export default function ChatThread({ conversationId }: { conversationId: string 
         setSupabaseReady(true);
       }
     } catch {
-      // Supabase tables may not exist yet — stay with demo data
+      // Supabase tables may not exist yet
     }
   }, [conversationId]);
 
-  // Load on mount
   useEffect(() => {
     loadSupabaseMessages();
   }, [loadSupabaseMessages]);
 
-  // Realtime subscription for Supabase conversations
   useEffect(() => {
     if (!supabaseReady && !conversationId.match(/^[0-9a-f-]{36}$/)) return;
 
@@ -112,7 +106,6 @@ export default function ChatThread({ conversationId }: { conversationId: string 
             created_at: msg.created_at,
           };
           setMessages((prev) => {
-            // Deduplicate (optimistic insert may already have it)
             if (prev.find((m) => m.id === newMsg.id)) return prev;
             return [...prev, newMsg];
           });
@@ -132,14 +125,13 @@ export default function ChatThread({ conversationId }: { conversationId: string 
   if (!otherProfile && !demoConv) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base">
-        <p className="text-secondary">Conversation not found</p>
+        <p className="text-text-secondary">Conversation not found</p>
       </div>
     );
   }
 
   const displayProfile = otherProfile || demoConv!.profile;
 
-  // Group consecutive messages by sender
   const groups: { sender: "me" | "them"; messages: DemoMessage[] }[] = [];
   messages.forEach((msg) => {
     const last = groups[groups.length - 1];
@@ -158,14 +150,12 @@ export default function ChatThread({ conversationId }: { conversationId: string 
     const tempId = `m-${Date.now()}`;
     const now = new Date().toISOString();
 
-    // Optimistic insert
     setMessages((prev) => [
       ...prev,
       { id: tempId, sender: "me", content, created_at: now },
     ]);
     setInput("");
 
-    // Try persisting to Supabase
     if (supabaseReady || conversationId.match(/^[0-9a-f-]{36}$/)) {
       try {
         const supabase = supabaseRef.current;
@@ -181,7 +171,6 @@ export default function ChatThread({ conversationId }: { conversationId: string 
           .select("id")
           .single();
 
-        // Update conversation last_message
         await supabase
           .from("conversations")
           .update({
@@ -190,14 +179,13 @@ export default function ChatThread({ conversationId }: { conversationId: string 
           })
           .eq("id", conversationId);
 
-        // Replace temp ID with real ID
         if (data) {
           setMessages((prev) =>
             prev.map((m) => (m.id === tempId ? { ...m, id: data.id } : m))
           );
         }
       } catch {
-        // Message stays in local state even if Supabase fails
+        // Message stays in local state
       }
     }
   }
@@ -205,9 +193,9 @@ export default function ChatThread({ conversationId }: { conversationId: string 
   return (
     <div className="flex flex-col h-screen bg-base">
       {/* Header */}
-      <header className="flex-shrink-0 flex items-center gap-3 px-4 pt-12 pb-3 bg-base/80 backdrop-blur-xl border-b border-line">
-        <Link href="/chat" className="flex items-center justify-center h-9 w-9 -ml-1 min-w-[44px] min-h-[44px]">
-          <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <header className="flex-shrink-0 flex items-center gap-3 px-4 pt-12 pb-3 bg-base/90 backdrop-blur-xl border-b border-white/5 z-20">
+        <Link href="/chat" className="flex items-center justify-center h-10 w-10 -ml-2 rounded-full hover:bg-white/10 transition-colors">
+          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
         </Link>
@@ -215,57 +203,73 @@ export default function ChatThread({ conversationId }: { conversationId: string 
         <img
           src={displayProfile.photo_url}
           alt={displayProfile.display_name}
-          className="h-9 w-9 rounded-full object-cover"
+          className="h-10 w-10 rounded-full object-cover ring-2 ring-white/10"
         />
 
         <div className="flex-1 min-w-0">
-          <h2 className="text-[15px] font-semibold text-primary leading-tight">
+          <h2 className="text-[16px] font-bold text-white leading-tight">
             {displayProfile.display_name}
           </h2>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 h-4">
             {displayProfile.looking_now && (
-              <span className="h-[5px] w-[5px] rounded-full bg-mint" />
+              <span className="h-1.5 w-1.5 rounded-full bg-status-online shadow-[0_0_5px_rgba(46,229,157,0.5)]" />
             )}
-            <span className="text-[11px] text-secondary">
-              {displayProfile.looking_now ? "Available now" : displayProfile.role}
-              {"distance" in displayProfile && ` · ${displayProfile.distance}`}
+            <span className="text-[12px] font-medium text-text-secondary truncate">
+              {displayProfile.looking_now ? "Online" : "Away"}
             </span>
           </div>
         </div>
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-3">
+      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4">
         {messages.length === 0 && (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-tertiary text-[14px]">Say something...</p>
+          <div className="flex-1 flex flex-col items-center justify-center opacity-50">
+            <span className="text-4xl mb-2">👋</span>
+            <p className="text-text-tertiary text-[14px]">Start the conversation...</p>
           </div>
         )}
         {groups.map((group, i) => (
           <MessageGroup key={i} messages={group.messages} isMe={group.sender === "me"} />
         ))}
-        <div ref={bottomRef} />
+        <div ref={bottomRef} className="h-1" />
       </div>
 
       {/* Input bar */}
-      <div className="flex-shrink-0 px-4 py-2.5 pb-[calc(0.75rem+env(safe-area-inset-bottom))] bg-base/80 backdrop-blur-xl border-t border-line">
-        <form onSubmit={handleSend} className="flex items-center gap-2.5">
+      <div className="flex-shrink-0 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-surface/80 backdrop-blur-xl border-t border-white/5">
+        <form onSubmit={handleSend} className="flex items-center gap-2">
+
+          {/* Quick Actions */}
+          <button type="button" className="p-2.5 rounded-full bg-elevated text-accent hover:bg-white/10 transition-colors active:scale-95">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </button>
+          <button type="button" className="p-2.5 rounded-full bg-elevated text-accent hover:bg-white/10 transition-colors active:scale-95">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+            </svg>
+          </button>
+
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Message..."
-            className="flex-1 rounded-full bg-surface px-4 py-2.5 text-[15px] text-primary placeholder-tertiary focus:outline-none focus:ring-1 focus:ring-accent/30 min-h-[44px]"
+            placeholder="Type a message..."
+            className="flex-1 rounded-full bg-elevated px-4 py-3 text-[16px] text-white placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all"
           />
-          <button
-            type="submit"
-            disabled={!input.trim()}
-            className="flex items-center justify-center h-10 w-10 rounded-full bg-accent text-white transition-all disabled:opacity-20 active:scale-95 min-w-[44px] min-h-[44px]"
-          >
-            <svg className="w-[18px] h-[18px] translate-x-[1px]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-            </svg>
-          </button>
+
+          {input.trim() && (
+            <button
+              type="submit"
+              className="p-2.5 rounded-full bg-accent text-white transition-all hover:bg-accent-hover active:scale-95 animate-in fade-in zoom-in"
+            >
+              <svg className="w-5 h-5 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+              </svg>
+            </button>
+          )}
         </form>
       </div>
     </div>

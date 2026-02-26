@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const tabs = [
-  { href: "/home", label: "Nearby" },
+  { href: "/home", label: "PrismApp.us" },
   { href: "/chat", label: "Chat" },
   { href: "/profile", label: "You" },
 ] as const;
@@ -58,13 +58,12 @@ export default function Nav() {
               <Link
                 key={href}
                 href={href}
-                className={`group flex flex-col items-center justify-center gap-1 transition-all duration-300 ${active ? "-translate-y-1" : "hover:-translate-y-0.5"
-                  }`}
+                className="flex flex-col items-center justify-center gap-1"
               >
-                <div className={`relative ${active ? "animate-[bounce_0.5s_infinite]" : ""}`}>
+                <div className="relative">
                   {iconMap[href](active)}
                   {active && (
-                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-r from-primary-start to-primary-end" />
+                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent" />
                   )}
                 </div>
               </Link>
